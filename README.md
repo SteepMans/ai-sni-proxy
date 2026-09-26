@@ -1,8 +1,8 @@
 > 🇬🇧 **English speaker?** [Read this page in English →](README.en.md)
 
-# dns-ai-proxy
+# ai-sni-proxy
 
-[![Stars](https://img.shields.io/github/stars/SteepMans/dns-ai-proxy?style=social)](https://github.com/SteepMans/dns-ai-proxy/stargazers)
+[![Stars](https://img.shields.io/github/stars/SteepMans/ai-sni-proxy?style=social)](https://github.com/SteepMans/ai-sni-proxy/stargazers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS%20%7C%20Linux-blue)](#установка)
 
@@ -12,6 +12,11 @@
 страны, которую эти сервисы не обслуживают. Без VPN, без программы в фоне, без
 расширения для браузера: скрипт добавляет один блок в файл `hosts`, и только
 перечисленные имена идут через прокси за границей.
+
+> **Почему такое название.** SNI — имя сервера, которое TLS передаёт открытым
+> текстом в самом первом пакете соединения. По нему прокси и понимает, куда вас
+> вести, ничего не расшифровывая. DNS-сервера здесь нет вовсе: на вашей стороне
+> правится только файл `hosts`.
 
 📖 [Ручная настройка](docs/manual.md) · 🇬🇧 [In English](README.en.md)
 
@@ -32,8 +37,8 @@ flowchart TB
     A --> A1["Решение принято за границей,<br/>самим сервисом, по вашему<br/>IP-адресу. Внутри страны<br/>вам никто не мешает."]
     B --> B1["Решение принято дома,<br/>оборудованием фильтрации<br/>у оператора, по имени сервера<br/>в приветствии TLS."]
 
-    A1 --> A2["<b>dns-ai-proxy решает это</b><br/>сервис видит зарубежный адрес"]
-    B1 --> B2["<b>dns-ai-proxy тут бессилен</b><br/>имя читают раньше, чем пакеты<br/>уйдут за границу"]
+    A1 --> A2["<b>ai-sni-proxy решает это</b><br/>сервис видит зарубежный адрес"]
+    B1 --> B2["<b>ai-sni-proxy тут бессилен</b><br/>имя читают раньше, чем пакеты<br/>уйдут за границу"]
 
     style Q fill:#e8f0fe,stroke:#4285f4,color:#111
     style A2 fill:#e6f4ea,stroke:#34a853,color:#111
@@ -58,7 +63,7 @@ flowchart LR
         U1 -.->|"и за границу идёт всё:<br/>банк, госуслуги, работа"| S1
     end
 
-    subgraph D["С dns-ai-proxy"]
+    subgraph D["С ai-sni-proxy"]
         direction LR
         U2["Вы"] -->|"обычный HTTPS к claude.ai<br/><i>туннеля нет вовсе</i>"| T2{"Фильтрация<br/>у оператора"}
         T2 -->|"проходит"| S2["Прокси"]
@@ -154,7 +159,7 @@ sequenceDiagram
 
 ## Установка
 
-Скачайте [готовую сборку](https://github.com/SteepMans/dns-ai-proxy/releases/latest)
+Скачайте [готовую сборку](https://github.com/SteepMans/ai-sni-proxy/releases/latest)
 или сам репозиторий (`git clone`), откройте папку своей системы и запустите файл.
 
 ### Windows
@@ -187,7 +192,7 @@ chmod +x *.command
 
 ```sh
 cd linux
-chmod +x *.sh ../bin/dns-ai-proxy.sh
+chmod +x *.sh ../bin/ai-sni-proxy.sh
 ./enable.sh          # спросит sudo
 ./disable.sh
 ./status.sh
@@ -196,7 +201,7 @@ chmod +x *.sh ../bin/dns-ai-proxy.sh
 Или напрямую, это то же самое:
 
 ```sh
-sudo ./bin/dns-ai-proxy.sh enable
+sudo ./bin/ai-sni-proxy.sh enable
 ```
 
 ### Одна вещь, которой браузеры это ломают
@@ -220,11 +225,11 @@ IP-адрес, объём и длительность соединения — �
 клиенту:
 
 ```sh
-sudo DNS_AI_PROXY_ENTRY=203.0.113.10 ./bin/dns-ai-proxy.sh enable
+sudo AI_SNI_PROXY_ENTRY=203.0.113.10 ./bin/ai-sni-proxy.sh enable
 ```
 
 ```powershell
-.\bin\dns-ai-proxy.ps1 enable -Entry 203.0.113.10
+.\bin\ai-sni-proxy.ps1 enable -Entry 203.0.113.10
 ```
 
 Серверу нужно отвечать на 443-м порту, маршрутизировать по SNI без расшифровки
@@ -238,7 +243,7 @@ sudo DNS_AI_PROXY_ENTRY=203.0.113.10 ./bin/dns-ai-proxy.sh enable
 
 | | |
 |---|---|
-| Публикуется | `https://chimney.steep-man.ru/dns-ai-proxy/domains.txt` |
+| Публикуется | `https://chimney.steep-man.ru/ai-sni-proxy/domains.txt` |
 | Группы | ИИ-сервисы, JetBrains |
 | Имён | 700+ |
 | Копия без сети | [`domains/fallback.txt`](domains/fallback.txt) |
@@ -250,7 +255,7 @@ sudo DNS_AI_PROXY_ENTRY=203.0.113.10 ./bin/dns-ai-proxy.sh enable
 **Не хватает сервиса?** Заведите issue с именами хостов — серверный список
 обновляется отсюда, и они приедут всем при следующем запуске. Чтобы добавить
 имена только себе, допишите их в `domains/fallback.txt` и запустите с пустым
-`DNS_AI_PROXY_LIST_URL=` — тогда победит локальная копия.
+`AI_SNI_PROXY_LIST_URL=` — тогда победит локальная копия.
 
 ---
 
@@ -258,7 +263,7 @@ sudo DNS_AI_PROXY_ENTRY=203.0.113.10 ./bin/dns-ai-proxy.sh enable
 
 Скрипт аккуратен с файлом, который правит, потому что файл не его:
 
-- перед каждой правкой делается копия с датой — `hosts.bak-dns-ai-proxy-*`;
+- перед каждой правкой делается копия с датой — `hosts.bak-ai-sni-proxy-*`;
 - заменяется только текст между двумя метками, больше ничего;
 - если блок повреждён (есть начало, нет конца) — скрипт останавливается и не
   меняет ничего;
@@ -276,9 +281,9 @@ sudo DNS_AI_PROXY_ENTRY=203.0.113.10 ./bin/dns-ai-proxy.sh enable
 
 | Переменная | По умолчанию | Что это |
 |---|---|---|
-| `DNS_AI_PROXY_ENTRY` | `84.38.189.217` | Адрес, на который смотрят имена |
-| `DNS_AI_PROXY_LIST_URL` | адрес выше | Откуда берётся список |
-| `DNS_AI_PROXY_HOSTS` | системный `hosts` | Какой файл править — удобно для проверки |
+| `AI_SNI_PROXY_ENTRY` | `84.38.189.217` | Адрес, на который смотрят имена |
+| `AI_SNI_PROXY_LIST_URL` | адрес выше | Откуда берётся список |
+| `AI_SNI_PROXY_HOSTS` | системный `hosts` | Какой файл править — удобно для проверки |
 
 В Windows те же три есть параметрами: `-Entry`, `-ListUrl`, `-HostsPath`.
 

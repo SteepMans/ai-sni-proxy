@@ -25,20 +25,20 @@
 его узнали):
 
 ```
-# >>> dns-ai-proxy: begin, do not edit by hand >>>
+# >>> ai-sni-proxy: begin, do not edit by hand >>>
 84.38.189.217	claude.ai
 ...
-# <<< dns-ai-proxy: end <<<
+# <<< ai-sni-proxy: end <<<
 ```
 
 ---
 
 ## Шаг 1 — взять список
 
-Откройте <https://chimney.steep-man.ru/dns-ai-proxy/domains.txt> в браузере или:
+Откройте <https://chimney.steep-man.ru/ai-sni-proxy/domains.txt> в браузере или:
 
 ```sh
-curl -fsSL https://chimney.steep-man.ru/dns-ai-proxy/domains.txt
+curl -fsSL https://chimney.steep-man.ru/ai-sni-proxy/domains.txt
 ```
 
 Это обычный текст: одно имя в строке, комментарии начинаются с `#`. Копия без
@@ -66,13 +66,13 @@ api.openai.com
 Каждая строка становится `<адрес><таб><имя>`. Однострочник:
 
 ```sh
-curl -fsSL https://chimney.steep-man.ru/dns-ai-proxy/domains.txt \
+curl -fsSL https://chimney.steep-man.ru/ai-sni-proxy/domains.txt \
   | grep -v '^#' | grep . \
   | awk '{print "84.38.189.217\t" $0}'
 ```
 
 ```powershell
-(Invoke-WebRequest 'https://chimney.steep-man.ru/dns-ai-proxy/domains.txt' -UseBasicParsing).Content `
+(Invoke-WebRequest 'https://chimney.steep-man.ru/ai-sni-proxy/domains.txt' -UseBasicParsing).Content `
   -split "`r?`n" | Where-Object { $_ -and $_ -notmatch '^#' } | ForEach-Object { "84.38.189.217`t$_" }
 ```
 
