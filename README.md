@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/banner.png" alt="ai-sni-proxy — доступ к ИИ-сервисам там, где не работает VPN" width="860">
+</p>
+
 > 🇬🇧 **English speaker?** [Read this page in English →](README.en.md)
 
 # ai-sni-proxy
