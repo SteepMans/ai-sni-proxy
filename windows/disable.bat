@@ -20,7 +20,7 @@ if errorlevel 1 (
 )
 
 cd /d "%~dp0"
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..in\dns-ai-proxy.ps1" disable %*
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\bin\dns-ai-proxy.ps1" disable %*
 
 echo.
 if errorlevel 1 (
