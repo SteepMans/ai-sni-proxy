@@ -1,0 +1,8 @@
+# Line endings matter here: cmd.exe needs CRLF in .bat, and /bin/sh chokes on
+# CRLF in a shell script. Git normalises on checkout so both stay correct
+# whichever system the repository is cloned on.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.sh text eol=lf
+*.command text eol=lf
