@@ -315,7 +315,7 @@ sudo AI_SNI_PROXY_ENTRY=203.0.113.10 ./bin/ai-sni-proxy.sh enable
 ```
 
 ```powershell
-.ini-sni-proxy.ps1 enable -Entry 203.0.113.10
+.\bin\ai-sni-proxy.ps1 enable -Entry 203.0.113.10
 ```
 
 ### Чего не делать
