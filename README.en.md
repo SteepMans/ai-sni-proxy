@@ -13,11 +13,6 @@ country those services refuse to serve. No VPN, no client running in the
 background, no browser extension: a script adds one block to your `hosts`
 file, and those names alone travel through a proxy abroad.
 
-> **About the name.** SNI is the server name that TLS sends in the clear in the
-> very first packet of a connection. That is what the proxy routes on, without
-> decrypting anything. There is no DNS server involved at all: on your side only
-> the `hosts` file is touched.
-
 📖 [Manual setup](docs/manual.en.md) · 🤝 [Contributing](CONTRIBUTING.md#contributing) · 🇷🇺 [По-русски](README.md)
 
 ---
