@@ -18,7 +18,7 @@
 > вести, ничего не расшифровывая. DNS-сервера здесь нет вовсе: на вашей стороне
 > правится только файл `hosts`.
 
-📖 [Ручная настройка](docs/manual.md) · 🇬🇧 [In English](README.en.md)
+📖 [Ручная настройка](docs/manual.md) · 🤝 [Как поучаствовать](CONTRIBUTING.md) · 🇬🇧 [In English](README.en.md)
 
 ---
 

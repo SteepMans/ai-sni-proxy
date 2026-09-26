@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: "Вопрос, а не баг / A question rather than a bug"
+    url: https://github.com/SteepMans/ai-sni-proxy/discussions
+    about: "Спросите в обсуждениях — там же живут идеи и всё, что не укладывается в шаблон."
+  - name: "Уязвимость / Security issue"
+    url: https://github.com/SteepMans/ai-sni-proxy/security/advisories/new
+    about: "Приватный отчёт. Публичный issue для этого не подходит."
