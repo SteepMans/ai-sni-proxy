@@ -161,25 +161,11 @@ administrator Notepad, and run `ipconfig /flushdns`.
 
 ## Using your own server
 
-Replace `84.38.189.217` with your server's address everywhere above. The server
-needs to listen on 443 and route by SNI without decrypting. The nginx part is
-short:
+Replace `84.38.189.217` with your server's address everywhere above. The
+server needs to listen on 443 and route by SNI without decrypting.
 
-```nginx
-stream {
-    map $ssl_preread_server_name $backend {
-        claude.ai          $ssl_preread_server_name:443;
-        api.anthropic.com  $ssl_preread_server_name:443;
-        default            127.0.0.1:9;      # nothing listens there
-    }
-
-    server {
-        listen 443;
-        ssl_preread on;
-        proxy_pass $backend;
-    }
-}
-```
-
-Keep the `default` line. Without it you are running an open relay, and it will
-be found and abused within days.
+The full nginx configuration — allow-list, startup, the guard against running
+an open relay, and a cron line to keep the list fresh — is in
+[Run your own server](../README.en.md#run-your-own-server) on the main page.
+It is tested on a live machine: short examples found online usually omit
+`resolver`, without which every connection ends in an error.
