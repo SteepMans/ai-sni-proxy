@@ -52,47 +52,41 @@ connecting from. Give it a different address and it serves you normally.
 
 ### So why not just use a VPN?
 
-Because in Russia a VPN buys you a new problem instead of solving this one.
+Because filtering in Russia is aimed at VPNs specifically, and it works. With
+ordinary HTTPS there is nothing for it to aim at.
 
 ```mermaid
 flowchart LR
     subgraph V["With a VPN"]
         direction LR
-        U1["You"] -->|"WireGuard / OpenVPN<br/><i>a shape the filter knows</i>"| T1{"Operator<br/>filtering"}
-        T1 -->|"throttled, handshakes broken,<br/>connection drops"| S1["VPN server"]
-        U1 -.->|"and everything goes abroad:<br/>bank, government, work"| S1
+        U1["You"] -->|"WireGuard / OpenVPN /<br/>IKEv2 — a distinctive shape"| T1{"Operator DPI<br/><i>hunting for tunnels</i>"}
+        T1 -->|"<b>recognised → suppressed</b><br/>throttling, handshakes that<br/>never finish, sessions that drop"| S1["VPN server"]
     end
 
     subgraph D["With ai-sni-proxy"]
         direction LR
-        U2["You"] -->|"ordinary HTTPS to claude.ai<br/><i>no tunnel to recognise</i>"| T2{"Operator<br/>filtering"}
-        T2 -->|"passes"| S2["Proxy"]
-        U2 -.->|"everything else<br/>goes out directly"| O2["Bank, mail, work"]
+        U2["You"] -->|"ordinary TLS to claude.ai<br/>no tunnel at all"| T2{"Operator DPI<br/><i>hunting for tunnels</i>"}
+        T2 -->|"<b>valid HTTPS, the name is on<br/>no register → nothing to act on</b>"| S2["Proxy"]
     end
 
+    style S1 fill:#fce8e6,stroke:#ea4335,color:#111
     style S2 fill:#e6f4ea,stroke:#34a853,color:#111
-    style O2 fill:#f1f3f4,stroke:#9aa0a6,color:#111,stroke-dasharray: 4 4
 ```
 
-The filtering equipment installed at every Russian operator (known as ТСПУ) is
-built to recognise traffic by its shape, and the common VPN protocols —
-WireGuard, OpenVPN, IKEv2 — have a very recognisable one. In practice that
-means throttling, handshakes that never finish and sessions that die after a
-minute. A VPN also sends **everything** abroad, including the banking and
-government sites that refuse foreign addresses in turn: you trade one region
-error for another.
+The filtering equipment at Russian operators identifies VPNs by the shape of
+their traffic — WireGuard, OpenVPN and IKEv2 each have a characteristic one —
+and suppresses them on purpose: throttling, handshakes that never complete,
+sessions that die after a minute. What follows is a cat-and-mouse game of
+obfuscation, TLS camouflage and port hopping, where every filter update breaks
+what worked yesterday.
 
-This tool sends no VPN protocol at all. What leaves your machine is an
-ordinary HTTPS connection to `claude.ai` — indistinguishable from any other
-HTTPS connection, because that is exactly what it is. There is no tunnel to
-detect, and only the listed names travel that way.
+There is no such game here. What leaves your machine is an ordinary TLS
+connection to `claude.ai` — to the filter, valid HTTPS to a name that is on no
+register. Nothing to recognise, nothing to block, nothing to act on.
 
-The flip side, worth knowing before you install: for a site that *is* on the
-national register, this approach does nothing. The name travels in the clear
-inside the very first TLS packet, the filter reads it long before your traffic
-reaches the border, and changing where the name resolves does not hide the
-name. That needs a tunnel which encrypts the name itself — a VPN or something
-like Hysteria, not this.
+A VPN's routing can of course be configured to send only selected addresses
+through the tunnel; that part is fixable. What is not fixable is that the
+tunnel itself is exactly what the filter is looking for.
 
 ---
 
