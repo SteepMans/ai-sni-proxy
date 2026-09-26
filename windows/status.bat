@@ -10,7 +10,7 @@ rem and anything else turns into garbage on a non-English Windows.
 setlocal
 
 cd /d "%~dp0"
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\bin\dns-ai-proxy.ps1" status %*
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\bin\ai-sni-proxy.ps1" status %*
 
 echo.
 if errorlevel 1 (

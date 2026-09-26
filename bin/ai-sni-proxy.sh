@@ -1,9 +1,9 @@
 #!/bin/sh
-# dns-ai-proxy client for Linux and macOS.
+# ai-sni-proxy client for Linux and macOS.
 #
-#   sudo ./dns-ai-proxy.sh enable    point AI service names at the proxy
-#   sudo ./dns-ai-proxy.sh disable   undo it
-#        ./dns-ai-proxy.sh status    show what is in place right now
+#   sudo ./ai-sni-proxy.sh enable    point AI service names at the proxy
+#   sudo ./ai-sni-proxy.sh disable   undo it
+#        ./ai-sni-proxy.sh status    show what is in place right now
 #
 # The script edits one block of /etc/hosts, marked with the lines below, and
 # never touches anything outside it. A timestamped copy of the file is made
@@ -13,17 +13,17 @@
 # same file runs there and on any Linux without a second dialect to maintain.
 #
 # Environment overrides:
-#   DNS_AI_PROXY_ENTRY      entry node address (default below)
-#   DNS_AI_PROXY_LIST_URL   where to fetch the domain list from
-#   DNS_AI_PROXY_HOSTS      hosts file to edit (useful for a dry run)
+#   AI_SNI_PROXY_ENTRY      entry node address (default below)
+#   AI_SNI_PROXY_LIST_URL   where to fetch the domain list from
+#   AI_SNI_PROXY_HOSTS      hosts file to edit (useful for a dry run)
 set -eu
 
-ENTRY="${DNS_AI_PROXY_ENTRY:-84.38.189.217}"
-LIST_URL="${DNS_AI_PROXY_LIST_URL:-https://chimney.steep-man.ru/dns-ai-proxy/domains.txt}"
-HOSTS="${DNS_AI_PROXY_HOSTS:-/etc/hosts}"
+ENTRY="${AI_SNI_PROXY_ENTRY:-84.38.189.217}"
+LIST_URL="${AI_SNI_PROXY_LIST_URL:-https://chimney.steep-man.ru/ai-sni-proxy/domains.txt}"
+HOSTS="${AI_SNI_PROXY_HOSTS:-/etc/hosts}"
 
-BEGIN_MARK="# >>> dns-ai-proxy: begin, do not edit by hand >>>"
-END_MARK="# <<< dns-ai-proxy: end <<<"
+BEGIN_MARK="# >>> ai-sni-proxy: begin, do not edit by hand >>>"
+END_MARK="# <<< ai-sni-proxy: end <<<"
 
 # A list this short means the download was truncated or we were served
 # something else entirely. Better to keep the bundled copy than to write
@@ -33,7 +33,7 @@ MIN_DOMAINS=20
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 fallback_list="$script_dir/../domains/fallback.txt"
 
-die() { printf 'dns-ai-proxy: %s\n' "$1" >&2; exit 1; }
+die() { printf 'ai-sni-proxy: %s\n' "$1" >&2; exit 1; }
 say() { printf '%s\n' "$1"; }
 
 require_root() {
@@ -90,7 +90,7 @@ assert_block_intact() {
     begins=$(grep -c -F -x "$BEGIN_MARK" "$HOSTS" || true)
     ends=$(grep -c -F -x "$END_MARK" "$HOSTS" || true)
     [ "$begins" = "$ends" ] || die \
-        "the dns-ai-proxy block in $HOSTS is damaged: $begins begin marks, $ends end marks. Nothing changed."
+        "the ai-sni-proxy block in $HOSTS is damaged: $begins begin marks, $ends end marks. Nothing changed."
 }
 
 strip_block() {
@@ -103,10 +103,10 @@ strip_block() {
 
 backup_hosts() {
     stamp=$(date +%Y%m%d-%H%M%S)
-    backup="$HOSTS.bak-dns-ai-proxy-$stamp"
+    backup="$HOSTS.bak-ai-sni-proxy-$stamp"
     n=1
     while [ -e "$backup" ]; do
-        backup="$HOSTS.bak-dns-ai-proxy-$stamp-$n"
+        backup="$HOSTS.bak-ai-sni-proxy-$stamp-$n"
         n=$((n + 1))
     done
     cp -p "$HOSTS" "$backup"
@@ -122,7 +122,7 @@ backup_hosts() {
 # copy - fails when the file belongs to someone else in a sticky directory,
 # because the kernel refuses that write even for root (fs.protected_regular).
 write_hosts() {
-    tmp="$HOSTS.dns-ai-proxy.tmp"
+    tmp="$HOSTS.ai-sni-proxy.tmp"
     rm -f "$tmp"
     cat > "$tmp"
     # GNU coreutils first, BSD and macOS second; both are best effort, because
@@ -157,7 +157,7 @@ print_support() {
 
 ------------------------------------------------------------------------
  Working for you? A star costs nothing and is the only metric we have:
-   https://github.com/SteepMans/dns-ai-proxy
+   https://github.com/SteepMans/ai-sni-proxy
 
  The exit servers are rented and paid for every month. If this is worth
  a coffee to you:
@@ -201,20 +201,20 @@ cmd_disable() {
     assert_block_intact
 
     if ! grep -q -F -x "$BEGIN_MARK" "$HOSTS"; then
-        say "nothing to undo: no dns-ai-proxy block in $HOSTS"
+        say "nothing to undo: no ai-sni-proxy block in $HOSTS"
         return 0
     fi
     backup=$(backup_hosts)
     strip_block | write_hosts
     flush_dns
-    say "disabled: the dns-ai-proxy block is gone from $HOSTS"
+    say "disabled: the ai-sni-proxy block is gone from $HOSTS"
     say "backup:   $backup"
 }
 
 cmd_status() {
     [ -f "$HOSTS" ] || die "no hosts file at $HOSTS"
     if ! grep -q -F -x "$BEGIN_MARK" "$HOSTS"; then
-        say "off: no dns-ai-proxy block in $HOSTS"
+        say "off: no ai-sni-proxy block in $HOSTS"
         return 0
     fi
     inside=$(awk -v b="$BEGIN_MARK" -v e="$END_MARK" '

@@ -1,6 +1,6 @@
 # Backups the client leaves next to the hosts file, in case anyone runs it
-# with DNS_AI_PROXY_HOSTS pointed inside the repository.
-*.bak-dns-ai-proxy-*
-*.dns-ai-proxy.tmp
+# with AI_SNI_PROXY_HOSTS pointed inside the repository.
+*.bak-ai-sni-proxy-*
+*.ai-sni-proxy.tmp
 .DS_Store
 Thumbs.db

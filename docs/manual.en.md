@@ -24,20 +24,20 @@ service's own address. Everything not listed keeps working exactly as before.
 Wrap the block in two marker lines so you (and the scripts) can find it again:
 
 ```
-# >>> dns-ai-proxy: begin, do not edit by hand >>>
+# >>> ai-sni-proxy: begin, do not edit by hand >>>
 84.38.189.217	claude.ai
 ...
-# <<< dns-ai-proxy: end <<<
+# <<< ai-sni-proxy: end <<<
 ```
 
 ---
 
 ## Step 1 — get the list
 
-Open <https://chimney.steep-man.ru/dns-ai-proxy/domains.txt> in a browser, or:
+Open <https://chimney.steep-man.ru/ai-sni-proxy/domains.txt> in a browser, or:
 
 ```sh
-curl -fsSL https://chimney.steep-man.ru/dns-ai-proxy/domains.txt
+curl -fsSL https://chimney.steep-man.ru/ai-sni-proxy/domains.txt
 ```
 
 It is a plain text file: one hostname per line, comments start with `#`.
@@ -66,13 +66,13 @@ Leaving names out only means those names keep going out directly.
 Each line becomes `<address><tab><name>`. A one-liner that does it:
 
 ```sh
-curl -fsSL https://chimney.steep-man.ru/dns-ai-proxy/domains.txt \
+curl -fsSL https://chimney.steep-man.ru/ai-sni-proxy/domains.txt \
   | grep -v '^#' | grep . \
   | awk '{print "84.38.189.217\t" $0}'
 ```
 
 ```powershell
-(Invoke-WebRequest 'https://chimney.steep-man.ru/dns-ai-proxy/domains.txt' -UseBasicParsing).Content `
+(Invoke-WebRequest 'https://chimney.steep-man.ru/ai-sni-proxy/domains.txt' -UseBasicParsing).Content `
   -split "`r?`n" | Where-Object { $_ -and $_ -notmatch '^#' } | ForEach-Object { "84.38.189.217`t$_" }
 ```
 

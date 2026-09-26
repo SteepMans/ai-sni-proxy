@@ -1,4 +1,4 @@
-# dns-ai-proxy bundled domain list
+# ai-sni-proxy bundled domain list
 # Used only when the client cannot reach the published list.
 # groups: ai jetbrains
 # built: 2026-09-26
