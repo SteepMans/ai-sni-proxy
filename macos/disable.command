@@ -9,13 +9,13 @@
 # quarantine flag once:  xattr -d com.apple.quarantine *.command
 cd "$(dirname "$0")" || exit 1
 
-# sudo wipes the environment, so the DNS_AI_PROXY_* variables are handed to it
-# explicitly. Without this, "DNS_AI_PROXY_ENTRY=... ./enable.sh" would quietly
+# sudo wipes the environment, so the AI_SNI_PROXY_* variables are handed to it
+# explicitly. Without this, "AI_SNI_PROXY_ENTRY=... ./enable.sh" would quietly
 # fall back to the default address - a system file edited somewhere other than
 # where you asked.
 if [ "$(id -u)" != 0 ]; then
     keep=""
-    for v in DNS_AI_PROXY_ENTRY DNS_AI_PROXY_LIST_URL DNS_AI_PROXY_HOSTS; do
+    for v in AI_SNI_PROXY_ENTRY AI_SNI_PROXY_LIST_URL AI_SNI_PROXY_HOSTS; do
         eval "val=\${$v:-}"
         [ -n "$val" ] && keep="$keep $v=$val"
     done
@@ -23,7 +23,7 @@ if [ "$(id -u)" != 0 ]; then
     exec sudo $keep "$0" "$@"
 fi
 
-../bin/dns-ai-proxy.sh disable "$@"
+../bin/ai-sni-proxy.sh disable "$@"
 
 echo ""
 echo "You can close this window."

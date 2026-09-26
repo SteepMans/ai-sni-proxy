@@ -8,7 +8,7 @@
 # If macOS refuses to open the file ("unidentified developer"), remove the
 # quarantine flag once:  xattr -d com.apple.quarantine *.command
 cd "$(dirname "$0")" || exit 1
-../bin/dns-ai-proxy.sh status "$@"
+../bin/ai-sni-proxy.sh status "$@"
 
 echo ""
 echo "You can close this window."

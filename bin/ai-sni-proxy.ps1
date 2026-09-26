@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    dns-ai-proxy client for Windows.
+    ai-sni-proxy client for Windows.
 
 .DESCRIPTION
     Points AI service names at the proxy by editing one marked block of the
@@ -16,9 +16,9 @@
     as PowerShell 7.
 
 .EXAMPLE
-    .\dns-ai-proxy.ps1 enable
-    .\dns-ai-proxy.ps1 disable
-    .\dns-ai-proxy.ps1 status
+    .\ai-sni-proxy.ps1 enable
+    .\ai-sni-proxy.ps1 disable
+    .\ai-sni-proxy.ps1 status
 #>
 [CmdletBinding()]
 param(
@@ -27,20 +27,20 @@ param(
     [string] $Command = 'status',
 
     # Entry node address. Override to use your own server.
-    [string] $Entry = $(if ($env:DNS_AI_PROXY_ENTRY) { $env:DNS_AI_PROXY_ENTRY } else { '84.38.189.217' }),
+    [string] $Entry = $(if ($env:AI_SNI_PROXY_ENTRY) { $env:AI_SNI_PROXY_ENTRY } else { '84.38.189.217' }),
 
-    [string] $ListUrl = $(if ($env:DNS_AI_PROXY_LIST_URL) { $env:DNS_AI_PROXY_LIST_URL }
-                          else { 'https://chimney.steep-man.ru/dns-ai-proxy/domains.txt' }),
+    [string] $ListUrl = $(if ($env:AI_SNI_PROXY_LIST_URL) { $env:AI_SNI_PROXY_LIST_URL }
+                          else { 'https://chimney.steep-man.ru/ai-sni-proxy/domains.txt' }),
 
     # Hosts file to edit. Point it somewhere else for a dry run.
-    [string] $HostsPath = $(if ($env:DNS_AI_PROXY_HOSTS) { $env:DNS_AI_PROXY_HOSTS }
+    [string] $HostsPath = $(if ($env:AI_SNI_PROXY_HOSTS) { $env:AI_SNI_PROXY_HOSTS }
                             else { Join-Path $env:SystemRoot 'System32\drivers\etc\hosts' })
 )
 
 $ErrorActionPreference = 'Stop'
 
-$BeginMark = '# >>> dns-ai-proxy: begin, do not edit by hand >>>'
-$EndMark   = '# <<< dns-ai-proxy: end <<<'
+$BeginMark = '# >>> ai-sni-proxy: begin, do not edit by hand >>>'
+$EndMark   = '# <<< ai-sni-proxy: end <<<'
 
 # A list this short means the download was truncated or we were served
 # something else entirely. Better the bundled copy than half a list in a
@@ -131,9 +131,9 @@ function Assert-BlockIntact {
     $begins = @($Lines | Where-Object { $_ -eq $BeginMark }).Count
     $ends   = @($Lines | Where-Object { $_ -eq $EndMark }).Count
     if ($begins -ne $ends) {
-        throw ("The dns-ai-proxy block in $Path is damaged: $begins begin marks, " +
+        throw ("The ai-sni-proxy block in $Path is damaged: $begins begin marks, " +
                "$ends end marks. Nothing changed. Check the file, or restore one of " +
-               "the $Path.bak-dns-ai-proxy-* copies.")
+               "the $Path.bak-ai-sni-proxy-* copies.")
     }
 }
 
@@ -155,11 +155,11 @@ function Remove-ProxyBlock {
 function Backup-Hosts {
     param([Parameter(Mandatory)][string] $Path)
     $stamp = Get-Date -Format yyyyMMdd-HHmmss
-    $backup = "$Path.bak-dns-ai-proxy-$stamp"
+    $backup = "$Path.bak-ai-sni-proxy-$stamp"
     # Two runs in the same second must not overwrite each other's copy.
     $n = 1
     while (Test-Path -LiteralPath $backup) {
-        $backup = "$Path.bak-dns-ai-proxy-$stamp-$n"
+        $backup = "$Path.bak-ai-sni-proxy-$stamp-$n"
         $n++
     }
     Copy-Item -LiteralPath $Path -Destination $backup
@@ -173,7 +173,7 @@ function Write-HostsAtomic {
     param([Parameter(Mandatory)][string] $Path,
           [AllowEmptyString()][AllowEmptyCollection()][string[]] $Lines,
           [Parameter(Mandatory)] $Encoding)
-    $tmp = "$Path.dns-ai-proxy.tmp"
+    $tmp = "$Path.ai-sni-proxy.tmp"
     [System.IO.File]::WriteAllLines($tmp, $Lines, $Encoding)
     try {
         # Replace keeps the original file's owner and permissions.
@@ -194,7 +194,7 @@ function Show-Support {
     Write-Host ""
     Write-Host "------------------------------------------------------------------------"
     Write-Host " Working for you? A star costs nothing and is the only metric we have:"
-    Write-Host "   https://github.com/SteepMans/dns-ai-proxy" -ForegroundColor Cyan
+    Write-Host "   https://github.com/SteepMans/ai-sni-proxy" -ForegroundColor Cyan
     Write-Host ""
     Write-Host " The exit servers are rented and paid for every month. If this is worth"
     Write-Host " a coffee to you:"
@@ -238,7 +238,7 @@ function Invoke-Disable {
     $lines = [System.IO.File]::ReadAllLines($HostsPath)
     Assert-BlockIntact -Lines $lines -Path $HostsPath
     if (-not ($lines -contains $BeginMark)) {
-        Write-Host "nothing to undo: no dns-ai-proxy block in $HostsPath"
+        Write-Host "nothing to undo: no ai-sni-proxy block in $HostsPath"
         return
     }
     $encoding = Get-HostsEncoding -Path $HostsPath
@@ -246,7 +246,7 @@ function Invoke-Disable {
     Write-HostsAtomic -Path $HostsPath -Lines (Remove-ProxyBlock -Lines $lines) -Encoding $encoding
     Clear-DnsCache
 
-    Write-Host "disabled: the dns-ai-proxy block is gone from $HostsPath" -ForegroundColor Green
+    Write-Host "disabled: the ai-sni-proxy block is gone from $HostsPath" -ForegroundColor Green
     Write-Host "backup:   $backup"
 }
 
@@ -254,7 +254,7 @@ function Invoke-Status {
     if (-not (Test-Path -LiteralPath $HostsPath)) { throw "No hosts file at $HostsPath" }
     $lines = [System.IO.File]::ReadAllLines($HostsPath)
     if (-not ($lines -contains $BeginMark)) {
-        Write-Host "off: no dns-ai-proxy block in $HostsPath"
+        Write-Host "off: no ai-sni-proxy block in $HostsPath"
         return
     }
     $inside = @()

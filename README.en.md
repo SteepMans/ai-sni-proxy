@@ -1,8 +1,8 @@
 > 🇷🇺 **Читаете по-русски?** [Основная версия этой страницы →](README.md)
 
-# dns-ai-proxy
+# ai-sni-proxy
 
-[![Stars](https://img.shields.io/github/stars/SteepMans/dns-ai-proxy?style=social)](https://github.com/SteepMans/dns-ai-proxy/stargazers)
+[![Stars](https://img.shields.io/github/stars/SteepMans/ai-sni-proxy?style=social)](https://github.com/SteepMans/ai-sni-proxy/stargazers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS%20%7C%20Linux-blue)](#install)
 
@@ -12,6 +12,11 @@ Reach Claude, ChatGPT, Gemini, JetBrains AI and 700+ related hostnames from a
 country those services refuse to serve. No VPN, no client running in the
 background, no browser extension: a script adds one block to your `hosts`
 file, and those names alone travel through a proxy abroad.
+
+> **About the name.** SNI is the server name that TLS sends in the clear in the
+> very first packet of a connection. That is what the proxy routes on, without
+> decrypting anything. There is no DNS server involved at all: on your side only
+> the `hosts` file is touched.
 
 📖 [Manual setup](docs/manual.en.md) · 🇷🇺 [По-русски](README.md)
 
@@ -32,8 +37,8 @@ flowchart TB
     A --> A1["Decided abroad, by the service,<br/>from your IP address.<br/>Nothing inside the country<br/>is stopping you."]
     B --> B1["Decided at home, by the filtering<br/>equipment at your operator,<br/>from the server name it reads<br/>in the TLS handshake."]
 
-    A1 --> A2["<b>dns-ai-proxy fixes this</b><br/>the service sees a foreign address"]
-    B1 --> B2["<b>dns-ai-proxy cannot fix this</b><br/>the name is read before your<br/>packets leave the country"]
+    A1 --> A2["<b>ai-sni-proxy fixes this</b><br/>the service sees a foreign address"]
+    B1 --> B2["<b>ai-sni-proxy cannot fix this</b><br/>the name is read before your<br/>packets leave the country"]
 
     style Q fill:#e8f0fe,stroke:#4285f4,color:#111
     style A2 fill:#e6f4ea,stroke:#34a853,color:#111
@@ -58,7 +63,7 @@ flowchart LR
         U1 -.->|"and everything goes abroad:<br/>bank, government, work"| S1
     end
 
-    subgraph D["With dns-ai-proxy"]
+    subgraph D["With ai-sni-proxy"]
         direction LR
         U2["You"] -->|"ordinary HTTPS to claude.ai<br/><i>no tunnel to recognise</i>"| T2{"Operator<br/>filtering"}
         T2 -->|"passes"| S2["Proxy"]
@@ -155,7 +160,7 @@ reaches you on your next run — no re-download, no update mechanism to trust.
 
 ## Install
 
-Download a [prebuilt archive](https://github.com/SteepMans/dns-ai-proxy/releases/latest)
+Download a [prebuilt archive](https://github.com/SteepMans/ai-sni-proxy/releases/latest)
 or the repository itself (`git clone`), open the folder for your system and run
 the file.
 
@@ -188,7 +193,7 @@ chmod +x *.command
 
 ```sh
 cd linux
-chmod +x *.sh ../bin/dns-ai-proxy.sh
+chmod +x *.sh ../bin/ai-sni-proxy.sh
 ./enable.sh          # asks for sudo
 ./disable.sh
 ./status.sh
@@ -197,7 +202,7 @@ chmod +x *.sh ../bin/dns-ai-proxy.sh
 Or call the script directly, which is the same thing:
 
 ```sh
-sudo ./bin/dns-ai-proxy.sh enable
+sudo ./bin/ai-sni-proxy.sh enable
 ```
 
 ### One thing browsers do that breaks this
@@ -221,11 +226,11 @@ service, and the proxy never holds the keys.
 If that trade is not for you, run your own exit node and point the client at it:
 
 ```sh
-sudo DNS_AI_PROXY_ENTRY=203.0.113.10 ./bin/dns-ai-proxy.sh enable
+sudo AI_SNI_PROXY_ENTRY=203.0.113.10 ./bin/ai-sni-proxy.sh enable
 ```
 
 ```powershell
-.\bin\dns-ai-proxy.ps1 enable -Entry 203.0.113.10
+.\bin\ai-sni-proxy.ps1 enable -Entry 203.0.113.10
 ```
 
 Your server needs to answer on port 443, route by SNI without decrypting
@@ -239,7 +244,7 @@ client does not care how it is built.
 
 | | |
 |---|---|
-| Published at | `https://chimney.steep-man.ru/dns-ai-proxy/domains.txt` |
+| Published at | `https://chimney.steep-man.ru/ai-sni-proxy/domains.txt` |
 | Groups | AI services, JetBrains |
 | Names | 700+ |
 | Offline copy | [`domains/fallback.txt`](domains/fallback.txt) |
@@ -251,7 +256,7 @@ rather than written to a system file.
 **Missing a service?** Open an issue with the hostnames — the server list is
 updated from here, and everyone gets them on their next run. To add names for
 yourself alone, append them to `domains/fallback.txt` and run with
-`DNS_AI_PROXY_LIST_URL=` (empty) so the local copy wins.
+`AI_SNI_PROXY_LIST_URL=` (empty) so the local copy wins.
 
 ---
 
@@ -259,7 +264,7 @@ yourself alone, append them to `domains/fallback.txt` and run with
 
 The script is careful with the file it edits, because it is not ours:
 
-- a timestamped copy is made before every change — `hosts.bak-dns-ai-proxy-*`;
+- a timestamped copy is made before every change — `hosts.bak-ai-sni-proxy-*`;
 - only the text between the two marker lines is replaced, never anything else;
 - if the marker block is damaged (a begin without an end), the script stops and
   changes nothing;
@@ -276,9 +281,9 @@ Prefer to do it by hand, or want to know exactly what the script writes? The
 
 | Variable | Default | What it is |
 |---|---|---|
-| `DNS_AI_PROXY_ENTRY` | `84.38.189.217` | Address the names point at |
-| `DNS_AI_PROXY_LIST_URL` | the URL above | Where the list comes from |
-| `DNS_AI_PROXY_HOSTS` | system `hosts` | File to edit — handy for a dry run |
+| `AI_SNI_PROXY_ENTRY` | `84.38.189.217` | Address the names point at |
+| `AI_SNI_PROXY_LIST_URL` | the URL above | Where the list comes from |
+| `AI_SNI_PROXY_HOSTS` | system `hosts` | File to edit — handy for a dry run |
 
 On Windows the same three exist as parameters: `-Entry`, `-ListUrl`, `-HostsPath`.
 
