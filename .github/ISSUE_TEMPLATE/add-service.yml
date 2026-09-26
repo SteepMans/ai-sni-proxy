@@ -1,0 +1,51 @@
+name: "Добавить сервис в список / Add a service"
+description: "Сервис не работает через прокси, потому что его домены не в списке"
+title: "Добавить: "
+labels: ["domains"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Список доменов живёт на сервере, поэтому добавленные имена приезжают
+        всем пользователям при следующем запуске клиента — обновлять клиент не нужно.
+
+        The domain list lives on the server, so added names reach every user on
+        their next run — no client update needed.
+
+  - type: input
+    id: service
+    attributes:
+      label: "Сервис / Service"
+      placeholder: "Perplexity, Mistral, Midjourney…"
+    validations:
+      required: true
+
+  - type: textarea
+    id: hostnames
+    attributes:
+      label: "Имена хостов / Hostnames"
+      description: |
+        По одному в строке. Как узнать: откройте сайт, F12 → вкладка Network,
+        посмотрите, к каким доменам он обращается. Не обязательно найти все —
+        начните с самого сайта и его API.
+
+        One per line. To find them: open the site, F12 → Network tab, look at
+        which domains it talks to.
+      placeholder: |
+        example.ai
+        www.example.ai
+        api.example.ai
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: "Что происходит сейчас / What happens now"
+      description: |
+        Например: сайт пишет «недоступно в вашем регионе», или вход проходит,
+        а API отвечает 403.
+      placeholder: "Открывается, но при входе — unavailable in your region"
+    validations:
+      required: false

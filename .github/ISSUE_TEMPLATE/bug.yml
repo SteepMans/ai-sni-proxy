@@ -1,0 +1,50 @@
+name: "Что-то не работает / Something is broken"
+description: "Клиент падает, не ставится, или ставится — но сервис всё равно недоступен"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Перед тем как писать: если `ping имя.сервиса` показывает адрес прокси,
+        а браузер всё равно пишет про регион — почти наверняка виноват
+        «Безопасный DNS» (DNS over HTTPS) в самом браузере, он не смотрит в файл
+        `hosts`. Выключите его в настройках браузера и перезапустите.
+
+        If `ping` shows the proxy address but the browser still shows a region
+        error, turn off Secure DNS / DNS over HTTPS in the browser first.
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: "Система / System"
+      options:
+        - Windows
+        - macOS
+        - Linux
+    validations:
+      required: true
+
+  - type: textarea
+    id: status
+    attributes:
+      label: "Вывод status / Output of status"
+      description: "`status.bat`, `./status.sh` или `status.command`"
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: "Что происходит / What happens"
+      description: "Что вы сделали, что ожидали увидеть и что увидели. Сообщения об ошибках — целиком."
+    validations:
+      required: true
+
+  - type: input
+    id: service
+    attributes:
+      label: "Какой сервис / Which service"
+      placeholder: "claude.ai"
+    validations:
+      required: false
