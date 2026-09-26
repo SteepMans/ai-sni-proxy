@@ -219,10 +219,10 @@ If this is useful to you, a coffee's worth helps keep them running:
 
 | Coin | Address |
 |---|---|
-| BTC | `_BTC_ADDRESS_` |
-| ETH / USDT (ERC-20) | `_ETH_ADDRESS_` |
-| USDT (TRC-20) | `_TRC20_ADDRESS_` |
-| TON | `_TON_ADDRESS_` |
+| BTC | `bc1qfkqmazqmg44uzk286j93f84dzecdarsf7nwxrj` |
+| ETH / USDT (ERC-20) | `0xB193C1A2067a911C8df9dB7883C0a2993Ec2c05A` |
+| TRX / USDT (TRC-20) | `TSeaXnbc8XVWdXg1RDCEVpqLUvsEakTcnz` |
+| USDT (TON) | `UQCWcoMOvwc_2Q9c3bbLHWJA_PJoJK4xzRwK0mvYurGwHC7u` |
 
 A ⭐ on the repository costs nothing and helps just as much.
 
