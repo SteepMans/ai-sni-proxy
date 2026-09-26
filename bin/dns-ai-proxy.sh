@@ -115,12 +115,25 @@ backup_hosts() {
 
 # Write through a temporary file and move it into place: a plain redirect
 # truncates the original first, and an interruption there leaves the machine
-# with no hosts file at all. cp -p first so the copy inherits the original
-# owner and permissions.
+# with no hosts file at all.
+#
+# The temporary file is created first and only then given the original's owner
+# and mode. The other way round - copying the original and writing into the
+# copy - fails when the file belongs to someone else in a sticky directory,
+# because the kernel refuses that write even for root (fs.protected_regular).
 write_hosts() {
     tmp="$HOSTS.dns-ai-proxy.tmp"
-    cp -p "$HOSTS" "$tmp"
+    rm -f "$tmp"
     cat > "$tmp"
+    # GNU coreutils first, BSD and macOS second; both are best effort, because
+    # a hosts file with default root ownership is already correct.
+    if ! chmod --reference="$HOSTS" "$tmp" 2>/dev/null; then
+        chmod "$(stat -f '%Lp' "$HOSTS" 2>/dev/null || echo 644)" "$tmp" 2>/dev/null || true
+    fi
+    if ! chown --reference="$HOSTS" "$tmp" 2>/dev/null; then
+        owner=$(stat -f '%u:%g' "$HOSTS" 2>/dev/null || true)
+        [ -n "$owner" ] && chown "$owner" "$tmp" 2>/dev/null || true
+    fi
     mv -f "$tmp" "$HOSTS"
 }
 
