@@ -18,7 +18,7 @@ file, and those names alone travel through a proxy abroad.
 > decrypting anything. There is no DNS server involved at all: on your side only
 > the `hosts` file is touched.
 
-📖 [Manual setup](docs/manual.en.md) · 🇷🇺 [По-русски](README.md)
+📖 [Manual setup](docs/manual.en.md) · 🤝 [Contributing](CONTRIBUTING.md#contributing) · 🇷🇺 [По-русски](README.md)
 
 ---
 
