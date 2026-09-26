@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/banner.png" alt="ai-sni-proxy — access AI services where VPNs are blocked" width="860">
+</p>
+
 > 🇷🇺 **Читаете по-русски?** [Основная версия этой страницы →](README.md)
 
 # ai-sni-proxy
