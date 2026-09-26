@@ -188,6 +188,23 @@ function Clear-DnsCache {
     try { ipconfig /flushdns | Out-Null } catch { }
 }
 
+function Show-Support {
+    # Shown once, after a successful enable. The people who find this useful
+    # are exactly the people who never see the repository page.
+    Write-Host ""
+    Write-Host "------------------------------------------------------------------------"
+    Write-Host " Working for you? A star costs nothing and is the only metric we have:"
+    Write-Host "   https://github.com/SteepMans/dns-ai-proxy" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host " The exit servers are rented and paid for every month. If this is worth"
+    Write-Host " a coffee to you:"
+    Write-Host "   BTC   bc1qfkqmazqmg44uzk286j93f84dzecdarsf7nwxrj"
+    Write-Host "   ETH   0xB193C1A2067a911C8df9dB7883C0a2993Ec2c05A   (also USDT ERC-20)"
+    Write-Host "   TRX   TSeaXnbc8XVWdXg1RDCEVpqLUvsEakTcnz           (also USDT TRC-20)"
+    Write-Host "   TON   UQCWcoMOvwc_2Q9c3bbLHWJA_PJoJK4xzRwK0mvYurGwHC7u   (USDT TON)"
+    Write-Host "------------------------------------------------------------------------"
+}
+
 function Invoke-Enable {
     if (-not (Test-Admin)) { throw "This needs administrator rights. Run enable.bat, it asks for them itself." }
     if (-not (Test-Path -LiteralPath $HostsPath)) { throw "No hosts file at $HostsPath" }
@@ -211,6 +228,7 @@ function Invoke-Enable {
     Write-Host "enabled: $($domains.Count) names now point at $Entry" -ForegroundColor Green
     Write-Host "backup:  $backup"
     Write-Host "undo:    disable.bat"
+    Show-Support
 }
 
 function Invoke-Disable {

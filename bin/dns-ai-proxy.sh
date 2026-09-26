@@ -150,6 +150,25 @@ flush_dns() {
     fi
 }
 
+# Shown once, after a successful enable. The people who find this useful are
+# exactly the people who never see the repository page.
+print_support() {
+    cat <<'SUPPORT'
+
+------------------------------------------------------------------------
+ Working for you? A star costs nothing and is the only metric we have:
+   https://github.com/SteepMans/dns-ai-proxy
+
+ The exit servers are rented and paid for every month. If this is worth
+ a coffee to you:
+   BTC   bc1qfkqmazqmg44uzk286j93f84dzecdarsf7nwxrj
+   ETH   0xB193C1A2067a911C8df9dB7883C0a2993Ec2c05A   (also USDT ERC-20)
+   TRX   TSeaXnbc8XVWdXg1RDCEVpqLUvsEakTcnz           (also USDT TRC-20)
+   TON   UQCWcoMOvwc_2Q9c3bbLHWJA_PJoJK4xzRwK0mvYurGwHC7u   (USDT TON)
+------------------------------------------------------------------------
+SUPPORT
+}
+
 cmd_enable() {
     require_root enable
     [ -f "$HOSTS" ] || die "no hosts file at $HOSTS"
@@ -173,6 +192,7 @@ cmd_enable() {
     say "enabled: $count names now point at $ENTRY"
     say "backup:  $backup"
     say "undo:    sudo $0 disable"
+    print_support
 }
 
 cmd_disable() {
