@@ -214,21 +214,127 @@ IP-адрес, объём и длительность соединения — �
 вашего провайдера. Содержимое не видно: сессия TLS идёт между вашей машиной и
 сервисом, ключей у прокси нет.
 
-Если такой обмен вам не подходит — поднимите свой выходной узел и укажите его
-клиенту:
+Если такой обмен вам не подходит — поднимите свой выходной узел: готовая
+конфигурация с пояснениями лежит ниже, в разделе
+[«Свой сервер»](#свой-сервер). Клиенту всё равно, куда смотреть.
+
+---
+
+## Свой сервер
+
+Если не хотите пускать трафик через чужой прокси — поднимите свой. Это
+сорок строк конфигурации и пять минут: сервер ничего не расшифровывает,
+поэтому ему не нужны ни сертификаты, ни домен.
+
+Понадобится VPS за границей со свободным 443-м портом. Всё, что ниже,
+проверено на живой машине.
+
+**1. Конфигурация nginx** — `/opt/ai-sni-proxy/nginx.conf`:
+
+```nginx
+# ai-sni-proxy: minimal self-hosted server.
+# Routes TLS by the server name from the handshake without decrypting anything.
+
+events {}
+
+stream {
+    # Seven hundred names do not fit the default hash table, and nginx refuses
+    # to start rather than silently truncating the list.
+    map_hash_bucket_size 128;
+    map_hash_max_size 4096;
+
+    log_format sni '$remote_addr $ssl_preread_server_name $status $bytes_sent';
+    access_log /var/log/nginx/sni.log sni;
+
+    # Allowed names, generated from the domain list (see below).
+    map $ssl_preread_server_name $allowed {
+        hostnames;
+        default 0;
+        include /etc/nginx/allowed.map;
+    }
+
+    # Anything not on the list goes to the discard port, where nothing listens,
+    # so the connection dies immediately. Do not remove this line: without it
+    # you are running an open relay, and it will be found within days.
+    map $allowed $backend {
+        1       "$ssl_preread_server_name:443";
+        default "127.0.0.1:9";
+    }
+
+    # proxy_pass with a variable in it resolves the name at connection time,
+    # and for that nginx needs a resolver of its own - it does not read
+    # /etc/resolv.conf here. Without this line every connection ends in 500.
+    # ipv6=off on purpose: if the server has no working IPv6 route, an AAAA
+    # answer turns every connection into a timeout.
+    resolver 1.1.1.1 8.8.8.8 valid=300s ipv6=off;
+    resolver_timeout 5s;
+
+    limit_conn_zone $binary_remote_addr zone=perip:10m;
+
+    server {
+        listen 443;
+        ssl_preread on;
+        proxy_pass $backend;
+        proxy_timeout 5m;
+        limit_conn perip 200;
+    }
+}
+```
+
+**2. Список разрешённых имён** — без него сервер никого никуда не пустит:
+
+```sh
+curl -fsSL https://chimney.steep-man.ru/ai-sni-proxy/domains.txt   | grep -v '^#' | grep . | sed 's/$/ 1;/' > /opt/ai-sni-proxy/allowed.map
+```
+
+Список можно взять свой — формат простой: `имя 1;` в каждой строке.
+
+**3. Запуск:**
+
+```sh
+docker run -d --name ai-sni-proxy --restart unless-stopped --network host   -v /opt/ai-sni-proxy/nginx.conf:/etc/nginx/nginx.conf:ro   -v /opt/ai-sni-proxy/allowed.map:/etc/nginx/allowed.map:ro   nginx:1.27-alpine
+```
+
+Без докера подойдёт системный nginx, собранный с модулем `stream`
+(в Debian и Ubuntu — пакет `libnginx-mod-stream`).
+
+**4. Проверка** — с любой машины, подставив адрес сервера:
+
+```sh
+curl -sI --resolve claude.ai:443:203.0.113.10 https://claude.ai | head -1
+curl -sI --resolve example.com:443:203.0.113.10 https://example.com | head -1
+```
+
+Первая команда должна дать ответ сервиса, вторая — оборваться. Если
+оборвались обе, смотрите `docker logs ai-sni-proxy`.
+
+**5. Направьте клиент на свой сервер:**
 
 ```sh
 sudo AI_SNI_PROXY_ENTRY=203.0.113.10 ./bin/ai-sni-proxy.sh enable
 ```
 
 ```powershell
-.\bin\ai-sni-proxy.ps1 enable -Entry 203.0.113.10
+.ini-sni-proxy.ps1 enable -Entry 203.0.113.10
 ```
 
-Серверу нужно отвечать на 443-м порту, маршрутизировать по SNI без расшифровки
-(nginx `stream` с `ssl_preread` делает это строк в тридцать — конфиг есть
-в [инструкции](docs/manual.md)) и держать свой список разрешённых имён.
-Клиенту всё равно, как он устроен.
+### Чего не делать
+
+**Не убирайте строку с `127.0.0.1:9`.** Она отправляет всё, чего нет в списке,
+на порт, где никто не слушает. Без неё у вас открытый релей: через такой
+сервер ходят к чему угодно от вашего имени, и находят его за считаные дни —
+интернет сканируют непрерывно.
+
+**Не оставляйте список без обновления.** Сервисы заводят новые домены, и в
+какой-то день половина перестанет работать. Раз в сутки по расписанию:
+
+```sh
+0 5 * * * curl -fsSL https://chimney.steep-man.ru/ai-sni-proxy/domains.txt | grep -v '^#' | grep . | sed 's/$/ 1;/' > /opt/ai-sni-proxy/allowed.map && docker exec ai-sni-proxy nginx -s reload
+```
+
+**Не ставьте сервер в той же стране, откуда ходите.** Смысл в том, чтобы
+сервис увидел зарубежный адрес; из соседнего дата-центра он увидит ваш же
+регион.
 
 ---
 

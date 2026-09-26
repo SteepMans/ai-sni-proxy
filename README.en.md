@@ -216,20 +216,128 @@ duration of each connection — the same metadata your internet provider already
 has. It cannot record content: the TLS session is between your machine and the
 service, and the proxy never holds the keys.
 
-If that trade is not for you, run your own exit node and point the client at it:
+If that trade is not for you, run your own exit node: the whole
+configuration, tested and commented, is below in
+[Run your own server](#run-your-own-server). The client does not care where it
+points.
+
+---
+
+## Run your own server
+
+If you would rather not send your traffic through someone else's proxy, run
+your own. It is forty lines of configuration and five minutes of work: the
+server decrypts nothing, so it needs neither a certificate nor a domain name.
+
+You will need a VPS abroad with port 443 free. Everything below has been
+tested on a live machine.
+
+**1. The nginx configuration** — `/opt/ai-sni-proxy/nginx.conf`:
+
+```nginx
+# ai-sni-proxy: minimal self-hosted server.
+# Routes TLS by the server name from the handshake without decrypting anything.
+
+events {}
+
+stream {
+    # Seven hundred names do not fit the default hash table, and nginx refuses
+    # to start rather than silently truncating the list.
+    map_hash_bucket_size 128;
+    map_hash_max_size 4096;
+
+    log_format sni '$remote_addr $ssl_preread_server_name $status $bytes_sent';
+    access_log /var/log/nginx/sni.log sni;
+
+    # Allowed names, generated from the domain list (see below).
+    map $ssl_preread_server_name $allowed {
+        hostnames;
+        default 0;
+        include /etc/nginx/allowed.map;
+    }
+
+    # Anything not on the list goes to the discard port, where nothing listens,
+    # so the connection dies immediately. Do not remove this line: without it
+    # you are running an open relay, and it will be found within days.
+    map $allowed $backend {
+        1       "$ssl_preread_server_name:443";
+        default "127.0.0.1:9";
+    }
+
+    # proxy_pass with a variable in it resolves the name at connection time,
+    # and for that nginx needs a resolver of its own - it does not read
+    # /etc/resolv.conf here. Without this line every connection ends in 500.
+    # ipv6=off on purpose: if the server has no working IPv6 route, an AAAA
+    # answer turns every connection into a timeout.
+    resolver 1.1.1.1 8.8.8.8 valid=300s ipv6=off;
+    resolver_timeout 5s;
+
+    limit_conn_zone $binary_remote_addr zone=perip:10m;
+
+    server {
+        listen 443;
+        ssl_preread on;
+        proxy_pass $backend;
+        proxy_timeout 5m;
+        limit_conn perip 200;
+    }
+}
+```
+
+**2. The allow-list** — without it the server lets nobody anywhere:
+
+```sh
+curl -fsSL https://chimney.steep-man.ru/ai-sni-proxy/domains.txt   | grep -v '^#' | grep . | sed 's/$/ 1;/' > /opt/ai-sni-proxy/allowed.map
+```
+
+Bring your own list if you prefer — the format is one `name 1;` per line.
+
+**3. Start it:**
+
+```sh
+docker run -d --name ai-sni-proxy --restart unless-stopped --network host   -v /opt/ai-sni-proxy/nginx.conf:/etc/nginx/nginx.conf:ro   -v /opt/ai-sni-proxy/allowed.map:/etc/nginx/allowed.map:ro   nginx:1.27-alpine
+```
+
+A system nginx built with the `stream` module works just as well (on Debian
+and Ubuntu that is the `libnginx-mod-stream` package).
+
+**4. Check it** from any machine, with your server's address:
+
+```sh
+curl -sI --resolve claude.ai:443:203.0.113.10 https://claude.ai | head -1
+curl -sI --resolve example.com:443:203.0.113.10 https://example.com | head -1
+```
+
+The first should return the service's answer, the second should be cut off.
+If both are cut off, read `docker logs ai-sni-proxy`.
+
+**5. Point the client at it:**
 
 ```sh
 sudo AI_SNI_PROXY_ENTRY=203.0.113.10 ./bin/ai-sni-proxy.sh enable
 ```
 
 ```powershell
-.\bin\ai-sni-proxy.ps1 enable -Entry 203.0.113.10
+.ini-sni-proxy.ps1 enable -Entry 203.0.113.10
 ```
 
-Your server needs to answer on port 443, route by SNI without decrypting
-(nginx `stream` with `ssl_preread` does this in about thirty lines — the
-[manual](docs/manual.en.md) has the config), and hold its own allow-list. The
-client does not care how it is built.
+### What not to do
+
+**Do not remove the `127.0.0.1:9` line.** It sends everything that is not on
+the list to a port where nothing listens. Without it you are running an open
+relay: anyone can reach anything through your server under your name, and it
+will be found within days — the internet is scanned continuously.
+
+**Do not let the list go stale.** Services add new domains, and one day half
+of them stop working. Once a day is enough:
+
+```sh
+0 5 * * * curl -fsSL https://chimney.steep-man.ru/ai-sni-proxy/domains.txt | grep -v '^#' | grep . | sed 's/$/ 1;/' > /opt/ai-sni-proxy/allowed.map && docker exec ai-sni-proxy nginx -s reload
+```
+
+**Do not put the server in the country you are connecting from.** The whole
+point is for the service to see a foreign address; from the data centre next
+door it sees your own region.
 
 ---
 
