@@ -1,7 +1,7 @@
 # ai-sni-proxy bundled domain list
 # Used only when the client cannot reach the published list.
 # groups: ai jetbrains
-# built: 2026-09-26
+# built: 2026-10-03
 alkalimakersuite-pa.clients6.google.com
 webchannel-alkalimakersuite-pa.clients6.google.com
 apps.canva-apps.com
@@ -594,6 +594,7 @@ byid.eu-1.jetbrains.space
 byid.jetbrains.space
 ca.jetbrains.com
 cai.jetbrains.com
+cache-redirector.jetbrains.com
 cdn.jetbrains.com
 cloudconfig.jetbrains.com
 cloudfront.pkg-cdn.jetbrains.space
@@ -620,6 +621,7 @@ dotpeek-support.jetbrains.com
 dottrace-support.jetbrains.com
 download-cdn.jetbrains.com
 download-cdn.jetbrains.com.cn
+download.jetbrains.com
 downloads.marketplace.jetbrains.com
 dunnhumby.fls.jetbrains.com
 ea.jetbrains.com
