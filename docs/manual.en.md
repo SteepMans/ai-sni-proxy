@@ -44,7 +44,7 @@ It is a plain text file: one hostname per line, comments start with `#`.
 The offline copy in [`domains/fallback.txt`](../domains/fallback.txt) is the
 same thing.
 
-You do not need all 700+ names. A useful minimum for one service is the site
+You do not need all 800+ names. A useful minimum for one service is the site
 itself plus its API:
 
 ```
