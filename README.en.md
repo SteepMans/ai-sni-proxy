@@ -12,7 +12,7 @@
 
 **If this saved you an afternoon, leave a ⭐ — it is the only metric this project has.**
 
-Reach Claude, ChatGPT, Gemini, JetBrains AI and 700+ related hostnames from a
+Reach Claude, ChatGPT, Gemini, JetBrains AI and 800+ related hostnames from a
 country those services refuse to serve. No VPN, no client running in the
 background, no browser extension: a script adds one block to your `hosts`
 file, and those names alone travel through a proxy abroad.
@@ -139,7 +139,7 @@ sequenceDiagram
 
     Y->>C: enable (as administrator)
     C->>L: fetch the current domain list over HTTPS
-    L-->>C: 700+ names
+    L-->>C: 800+ names
     Note over C: falls back to the bundled copy<br/>if the server is unreachable
     C->>H: copy the file, then replace one marked block
     C-->>Y: done, and where the backup is
@@ -347,7 +347,7 @@ door it sees your own region.
 |---|---|
 | Published at | `https://chimney.steep-man.ru/ai-sni-proxy/domains.txt` |
 | Groups | AI services, JetBrains |
-| Names | 700+ |
+| Names | 800+ |
 | Offline copy | [`domains/fallback.txt`](domains/fallback.txt) |
 
 Every run downloads the current list; the bundled copy is used only when the
