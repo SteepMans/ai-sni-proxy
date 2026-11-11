@@ -198,6 +198,13 @@ Or call the script directly, which is the same thing:
 sudo ./bin/ai-sni-proxy.sh enable
 ```
 
+### Phone: Incy and Happ
+
+A phone has no `hosts` file, but in the Xray clients Incy and Happ a routing
+profile does the same mapping. Ready-made import links are in
+[`mobile`](mobile), and [docs/mobile.en.md](docs/mobile.en.md) explains how to
+install and check them.
+
 ### One thing browsers do that breaks this
 
 Chrome, Edge, Firefox and Yandex Browser can resolve names through their own

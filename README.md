@@ -197,6 +197,12 @@ chmod +x *.sh ../bin/ai-sni-proxy.sh
 sudo ./bin/ai-sni-proxy.sh enable
 ```
 
+### Телефон: Incy и Happ
+
+Файла `hosts` на телефоне нет, но в Xray-клиентах Incy и Happ ту же подмену
+делает профиль маршрутизации. Готовые ссылки для импорта лежат в
+[`mobile`](mobile), как поставить и проверить — [docs/mobile.md](docs/mobile.md).
+
 ### Одна вещь, которой браузеры это ломают
 
 Chrome, Edge, Firefox и Яндекс.Браузер умеют резолвить имена через собственный
