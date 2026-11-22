@@ -1,7 +1,7 @@
 # ai-sni-proxy bundled domain list
 # Used only when the client cannot reach the published list.
 # groups: ai jetbrains
-# built: 2026-10-20
+# built: 2026-11-22
 ai.studio
 aistudio.google.com
 alkalicore-pa.clients6.google.com
@@ -168,6 +168,61 @@ webrtc.chatgpt.com
 ws.chatgpt.com
 www.chatgpt.com
 www.openai.com
+multiplayer-u0.api.openai.com
+pages-realtime.gateway.unified-0.api.openai.com
+pages-realtime.gateway.unified-8.api.openai.com
+pages-realtime.gateway.unified-15.api.openai.com
+pages-realtime.gateway.unified-23.api.openai.com
+pages-realtime.gateway.unified-40.api.openai.com
+pages-realtime.gateway.unified-72.api.openai.com
+pages-realtime.gateway.unified-75.api.openai.com
+pages-realtime.gateway.unified-80.api.openai.com
+pages-realtime.gateway.unified-82.api.openai.com
+pages-realtime.gateway.unified-88.api.openai.com
+pages-realtime.gateway.unified-94.api.openai.com
+pages-realtime.gateway.unified-119.api.openai.com
+pages-realtime.gateway.unified-190.api.openai.com
+transceiver.api.openai.com
+codex-portals.api.openai.com
+checkpoints-au.files.openai.com
+checkpoints-eu.files.openai.com
+checkpoints-gb.files.openai.com
+checkpoints-in.files.openai.com
+checkpoints-jp.files.openai.com
+checkpoints-kr.files.openai.com
+checkpoints-sg.files.openai.com
+checkpoints-us.files.openai.com
+codex-cloud-backend.chatgpt.com
+m.chatgpt.com
+learn.chatgpt.com
+statsigcdn.openai.com
+api.oaistatsig.com
+chatgpt-async-webps-prod-centralus-0.webpubsub.azure.com
+chatgpt-async-webps-prod-centralus-1.webpubsub.azure.com
+chatgpt-async-webps-prod-centralus-2.webpubsub.azure.com
+chatgpt-async-webps-prod-centralus-3.webpubsub.azure.com
+chatgpt-async-webps-prod-centralus-4.webpubsub.azure.com
+chatgpt-async-webps-prod-centralus-5.webpubsub.azure.com
+chatgpt-async-webps-prod-eastus-0.webpubsub.azure.com
+chatgpt-async-webps-prod-eastus-1.webpubsub.azure.com
+chatgpt-async-webps-prod-eastus-2.webpubsub.azure.com
+chatgpt-async-webps-prod-eastus-3.webpubsub.azure.com
+chatgpt-async-webps-prod-eastus-4.webpubsub.azure.com
+chatgpt-async-webps-prod-eastus-5.webpubsub.azure.com
+chatgpt-async-webps-prod-southcentralus-0.webpubsub.azure.com
+chatgpt-async-webps-prod-southcentralus-1.webpubsub.azure.com
+chatgpt-async-webps-prod-southcentralus-2.webpubsub.azure.com
+chatgpt-async-webps-prod-southcentralus-3.webpubsub.azure.com
+chatgpt-async-webps-prod-southcentralus-4.webpubsub.azure.com
+chatgpt-async-webps-prod-southcentralus-5.webpubsub.azure.com
+chatgpt-async-webps-prod-westus-0.webpubsub.azure.com
+chatgpt-async-webps-prod-westus-1.webpubsub.azure.com
+chatgpt-async-webps-prod-westus-2.webpubsub.azure.com
+chatgpt-async-webps-prod-westus-3.webpubsub.azure.com
+chatgpt-async-webps-prod-westus-4.webpubsub.azure.com
+chatgpt-async-webps-prod-westus-5.webpubsub.azure.com
+chatgpt-async-webps-staging-eastus-0.webpubsub.azure.com
+chatgpt-async-webps-staging-southcentralus-0.webpubsub.azure.com
 a-api.anthropic.com
 a-cdn.anthropic.com
 a-cdn.claude.ai
